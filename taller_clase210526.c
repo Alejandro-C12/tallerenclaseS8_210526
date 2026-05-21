@@ -121,6 +121,6 @@ void calcularEstudiantes(float notas[MAX_EST][MAX_ASIG]) {
             if (n > max) max = n;
             if (n < min) min = n;
         }
-        printf("Estudiante %d -> Promedio: %.2f | Max: %.2f | Min: %.2f\n", i + 1, suma / MAX_ASIG, max, min);
+        printf("Estudiante %d -> Promedio: %.2f | Max: %.2f | Min: %.2f\n", i+1, suma / MAX_ASIG, max, min);
     }
 }
