@@ -4,7 +4,6 @@
 
 const char *MATERIAS[MAX_ASIG] = {"Matematica", "Lenguaje", "Computacion"};
 
-// Prototipos actualizados
 float limpiarYValidarEntrada(int num_estudiante);
 void registrarMateria(int num_est, float notas[][MAX_ASIG], int j, int *ap, int *rep, float *max, float *min, float *prom);
 void calcularEstudiantes(int num_est, float notas[][MAX_ASIG]);
@@ -20,7 +19,10 @@ int main(){
     printf("--------Sistema de Calificaciones--------\n");
     
     printf("Ingrese el numero de estudiantes a evaluar: ");
-    scanf("%d", &num_estudiantes);
+    while (scanf("%d", &num_estudiantes) != 1 || num_estudiantes <= 0) {
+        printf("Error: Ingrese una cantidad valida (mayor a 0): ");
+        while (getchar() != '\n'); 
+    }
 
     float notas[num_estudiantes][MAX_ASIG];
 
