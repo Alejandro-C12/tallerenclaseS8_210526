@@ -1,23 +1,28 @@
 #include <stdio.h>
 
-#define MAX_EST 5
 #define MAX_ASIG 3
 
 const char *MATERIAS[MAX_ASIG] = {"Matematica", "Lenguaje", "Computacion"};
 
-// Prototipos
+// Prototipos actualizados
 float limpiarYValidarEntrada(int num_estudiante);
-void registrarMateria(float notas[MAX_EST][MAX_ASIG], int j, int *ap, int *rep, float *max, float *min, float *prom);
-void calcularEstudiantes(float notas[MAX_EST][MAX_ASIG]);
+void registrarMateria(int num_est, float notas[][MAX_ASIG], int j, int *ap, int *rep, float *max, float *min, float *prom);
+void calcularEstudiantes(int num_est, float notas[][MAX_ASIG]);
 void mostrarReporteMaterias(float prom_asig[], float max_asig[], float min_asig[], int aprobados[], int reprobados[]);
 
 int main(){
-    float notas[MAX_EST][MAX_ASIG] = {0}, prom_asig[MAX_ASIG];
+    int num_estudiantes;
+    float prom_asig[MAX_ASIG];
     float max_asig[MAX_ASIG], min_asig[MAX_ASIG];
     int aprobados[MAX_ASIG] = {0}, reprobados[MAX_ASIG] = {0}, registradas[MAX_ASIG] = {0};
     int opcion, ingresadas = 0;
 
     printf("--------Sistema de Calificaciones--------\n");
+    
+    printf("Ingrese el numero de estudiantes a evaluar: ");
+    scanf("%d", &num_estudiantes);
+
+    float notas[num_estudiantes][MAX_ASIG];
 
     while (ingresadas < MAX_ASIG) {
         printf("\n--- MENU ---\n");
@@ -52,12 +57,11 @@ int main(){
             ingresadas++;
         }
 
-        registrarMateria(notas, j, &aprobados[j], &reprobados[j], &max_asig[j], &min_asig[j], &prom_asig[j]);
+        registrarMateria(num_estudiantes, notas, j, &aprobados[j], &reprobados[j], &max_asig[j], &min_asig[j], &prom_asig[j]);
     }
 
-    // Usamos la nueva función
     mostrarReporteMaterias(prom_asig, max_asig, min_asig, aprobados, reprobados);
-    calcularEstudiantes(notas);
+    calcularEstudiantes(num_estudiantes, notas);
 
     return 0;
 }
@@ -79,12 +83,12 @@ float limpiarYValidarEntrada(int num_estudiante) {
     }
 }
 
-void registrarMateria(float notas[MAX_EST][MAX_ASIG], int j, int *ap, int *rep, float *max, float *min, float *prom) {
+void registrarMateria(int num_est, float notas[][MAX_ASIG], int j, int *ap, int *rep, float *max, float *min, float *prom) {
     float suma = 0;
     *max = -1.0; *min = 11.0; *ap = 0; *rep = 0;
 
     printf("\nNotas para %s:\n", MATERIAS[j]);
-    for (int i = 0; i < MAX_EST; i++) {
+    for (int i = 0; i < num_est; i++) {
         notas[i][j] = limpiarYValidarEntrada(i + 1);
         float n = notas[i][j];
         suma += n;
@@ -92,7 +96,7 @@ void registrarMateria(float notas[MAX_EST][MAX_ASIG], int j, int *ap, int *rep, 
         if (n < *min) *min = n;
         if (n >= 6.0) (*ap)++; else (*rep)++;
     }
-    *prom = suma / MAX_EST;
+    *prom = suma / num_est;
 }
 
 void mostrarReporteMaterias(float prom_asig[], float max_asig[], float min_asig[], int aprobados[], int reprobados[]) {
@@ -103,9 +107,9 @@ void mostrarReporteMaterias(float prom_asig[], float max_asig[], float min_asig[
     }
 }
 
-void calcularEstudiantes(float notas[MAX_EST][MAX_ASIG]) {
+void calcularEstudiantes(int num_est, float notas[][MAX_ASIG]) {
     printf("\n--------Informacion del Estudiante--------\n");
-    for (int i = 0; i < MAX_EST; i++) {
+    for (int i = 0; i < num_est; i++) {
         float suma = 0, max = -1.0, min = 11.0;
         for (int j = 0; j < MAX_ASIG; j++) {
             float n = notas[i][j];
