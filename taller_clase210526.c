@@ -5,11 +5,11 @@
 
 const char *MATERIAS[MAX_ASIG] = {"Matematica", "Lenguaje", "Computacion"};
 
-// Prototipos de las Funciones
+// Prototipos
 float limpiarYValidarEntrada(int num_estudiante);
-
 void registrarMateria(float notas[MAX_EST][MAX_ASIG], int j, int *ap, int *rep, float *max, float *min, float *prom);
 void calcularEstudiantes(float notas[MAX_EST][MAX_ASIG]);
+void mostrarReporteMaterias(float prom_asig[], float max_asig[], float min_asig[], int aprobados[], int reprobados[]);
 
 int main(){
     float notas[MAX_EST][MAX_ASIG] = {0}, prom_asig[MAX_ASIG];
@@ -26,10 +26,9 @@ int main(){
         
         printf("Seleccione materia (1-3): ");
         
-        // Validación opción del menú
         if (scanf("%d", &opcion) != 1){
             printf("Error: Ingrese solo numeros.\n");
-            while (getchar() != '\n'); // Limpia el búfer del teclado
+            while (getchar() != '\n'); 
             continue;
         }
 
@@ -40,54 +39,41 @@ int main(){
         
         int j = opcion - 1;
 
-        // VERIFICACIÓN: Si la materia ya tiene notas, pregunta si desea cambiarla
         if (registradas[j] == 1){
             int sobrescribir;
             printf("Esta materia ya fue registrada. Desea modificar las notas? (1 = Si / 0 = No): ");
             if (scanf("%d", &sobrescribir) != 1 || sobrescribir != 1) {
-                while (getchar() != '\n'); // Limpia el búfer en caso de que escriban letras
+                while (getchar() != '\n'); 
                 printf("Operacion cancelada. Seleccione otra materia.\n");
-                continue; // Vuelve a pedir otra materia en el menú
+                continue; 
             }
         } else {
             registradas[j] = 1;
             ingresadas++;
         }
 
-        // Llenado de notas seguro
         registrarMateria(notas, j, &aprobados[j], &reprobados[j], &max_asig[j], &min_asig[j], &prom_asig[j]);
     }
 
-    // Reporte por Materias
-    printf("\n--------Resultados por Materia--------\n");
-    for (int j = 0; j < MAX_ASIG; j++) {
-        printf("\n> %s:\n Promedio: %.2f | Max: %.2f | Min: %.2f\n Aprobados: %d | Reprobados: %d\n",
-               MATERIAS[j], prom_asig[j], max_asig[j], min_asig[j], aprobados[j], reprobados[j]);
-    }
-
-    // Reporte por Alumnos
+    // Usamos la nueva función
+    mostrarReporteMaterias(prom_asig, max_asig, min_asig, aprobados, reprobados);
     calcularEstudiantes(notas);
 
     return 0;
 }
 
-// NUEVA FUNCIÓN: Evita el cierre del programa si se ingresan letras y valida el rango 0-10
 float limpiarYValidarEntrada(int num_estudiante) {
     float valor;
     while (1) {
         printf(" Alumno %d (0-10): ", num_estudiante);
-        
-        // scanf devuelve el número de elementos asignados exitosamente. 
-        // Si no es 1, significa que el usuario ingresó letras o símbolos.
         if (scanf("%f", &valor) == 1) {
             if (valor >= 0.0 && valor <= 10.0) {
-                return valor; // Entrada completamente válida, rompe el ciclo y devuelve la nota
+                return valor; 
             } else {
-                printf(" Error: La nota debe estar estrictamente en el rango de 0 a 10.\n");
+                printf(" Error: La nota debe estar en el rango de 0 a 10.\n");
             }
         } else {
-            printf(" Error: Entrada invalida. Por favor, ingrese solo numeros.\n");
-            // Bucle para limpiar los caracteres/letras que quedaron atrapados en el búfer
+            printf(" Error: Entrada invalida. Ingrese solo numeros.\n");
             while (getchar() != '\n'); 
         }
     }
@@ -99,9 +85,7 @@ void registrarMateria(float notas[MAX_EST][MAX_ASIG], int j, int *ap, int *rep, 
 
     printf("\nNotas para %s:\n", MATERIAS[j]);
     for (int i = 0; i < MAX_EST; i++) {
-        // Invocamos a la función validadora a prueba de letras
         notas[i][j] = limpiarYValidarEntrada(i + 1);
-
         float n = notas[i][j];
         suma += n;
         if (n > *max) *max = n;
@@ -109,6 +93,14 @@ void registrarMateria(float notas[MAX_EST][MAX_ASIG], int j, int *ap, int *rep, 
         if (n >= 6.0) (*ap)++; else (*rep)++;
     }
     *prom = suma / MAX_EST;
+}
+
+void mostrarReporteMaterias(float prom_asig[], float max_asig[], float min_asig[], int aprobados[], int reprobados[]) {
+    printf("\n--------Resultados por Materia--------\n");
+    for (int j = 0; j < MAX_ASIG; j++) {
+        printf("\n> %s:\n Promedio: %.2f | Max: %.2f | Min: %.2f\n Aprobados: %d | Reprobados: %d\n",
+               MATERIAS[j], prom_asig[j], max_asig[j], min_asig[j], aprobados[j], reprobados[j]);
+    }
 }
 
 void calcularEstudiantes(float notas[MAX_EST][MAX_ASIG]) {
